@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <title>Neighrborhood Map</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+	<div class="row">
+		<input id="address" type="textbox" value="Margareten, Vienna, Austria">
+		<input type="button" value="Search" onclick="codeAddress()">
+	</div>
+	<div class="row">
+		<input onclick="clearMarkers();" type=button value="Hide Markers">
+		<input onclick="showMarkers();" type=button value="Show All Markers">
+		<input onclick="deleteMarkers();" type=button value="Delete Markers">
+	</div>
+
+	<div class="row">
+		<div id="map-canvas">Map</div>
+	</div>
+
+	<div>test</div>
+
+	<script src="https://maps.googleapis.com/maps/api/js?region=EU?v=3.exp&signed_in=true"></script>
+	<script src="js/libs/jquery.min.js"></script>
+    <script async src="js/main.js"></script>
+</body>
+</html>
