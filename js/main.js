@@ -145,6 +145,15 @@ function populateMarkers(data){
     var marker = new google.maps.Marker({
       position: location,
       title: dataEntry.title,
+      icon: function(){
+        if(dataEntry.type == 'Misc'){
+          return 'images/yellow_MarkerM.png';
+        }else if(dataEntry.type == 'Supermarket'){
+          return 'images/red_MarkerS.png';
+        }else if(dataEntry.type == 'Restaurant'){
+          return 'images/darkgreen_MarkerR.png';
+        }
+      }(),
       map: map
     });
     var infowindow = new google.maps.InfoWindow({
