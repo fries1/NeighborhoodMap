@@ -13,7 +13,9 @@
 		<input type="button" value="Search" onclick="codeAddress()">
 	</div>
 	<div class="row">
-		<input onclick="clearMarkers();" type=button value="Hide Markers">
+		<h4 data-bind="name"></h4>
+		<input data-bind="click $parent.clearMarkers" type=button value="Hide Markers">
+		<input onclick="ViewModel.clearMarkers();" type=button value="Hide Markers">
 		<input onclick="showMarkers();" type=button value="Show All Markers">
 		<input onclick="deleteMarkers();" type=button value="Delete Markers">
 	</div class="row">

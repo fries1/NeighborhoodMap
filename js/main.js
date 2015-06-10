@@ -81,11 +81,11 @@ var data = [{
   },
 ];
 
-var myMap =  {
-  'geocoder' : undefined,
-  'map' : undefined,
-  'markers' : [],
-  'marker_types' : []
+var myMap = function() {
+  this.geocoder;
+  this.map;
+  this.markers = [];
+  this.marker_types = [];
 
 };
 
@@ -93,6 +93,8 @@ var ViewModel = function() {
   console.log(myMap.markers);
   console.log('test');
   var self = this;
+  this.name = ko.observable('Stefan');
+
   this.populateMarkers = function(data) {
     for(var i=0; i<data.length; i++){
       var dataEntry = data[i];
@@ -199,7 +201,6 @@ var ViewModel = function() {
 
   // Sets the map on all markers in the array.
   this.setAllMap = function(map) {
-
     for (var i = 0; i < myMap.markers.length; i++) {
       myMap.markers[i].setMap(map);
     }
@@ -207,8 +208,9 @@ var ViewModel = function() {
 
   // Removes the markers from the map, but keeps them in the array.
   this.clearMarkers = function() {
+    console.log('in clearMarkers');
     // might not work!
-    this.setAllMap(null);
+    self.setAllMap(null);
   };
 
   // Shows any markers currently in the array.
