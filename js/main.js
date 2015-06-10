@@ -114,14 +114,14 @@ var data = [{
     'title' : 'Billa',
     'lat' : 48.19221192784606,
     'lng' : 16.36017680168152,
-    'description' : 'vegan shop, Margaretenstraße 67, 1050 Wien, Austria',
+    'description' : 'supermarket, Margaretenstraße 67, 1050 Wien, Austria',
     'type' : 'Supermarket'
   },
   {
     'title' : 'Billa',
     'lat' : 48.19266072672536,
     'lng' : 16.355563402175903,
-    'description' : 'vegan shop, Pilgramgasse 22, 1050 Wien, Austria',
+    'description' : 'yet another supermarket, Pilgramgasse 22, 1050 Wien, Austria',
     'type' : 'Supermarket'
   },
   {
