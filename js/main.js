@@ -136,15 +136,30 @@ var data = [{
 function populateMarkers(data){
 
   for(var i=0; i<data.length; i++){
+    var dataEntry = data[i];
     var location = {
-        'lat': data[i].lat,
-        'lng': data[i].lng,
+        'lat': dataEntry.lat,
+        'lng': dataEntry.lng,
       };
     console.log(location);
     var marker = new google.maps.Marker({
       position: location,
+      title: dataEntry.title,
       map: map
     });
+    var infowindow = new google.maps.InfoWindow({
+          content: dataEntry.description
+        });
+
+    // Add an Eventlistener to the marker that can access the marker's infowindow when clicked
+    google.maps.event.addListener(marker, 'click', (function(infowindowCopy, markerCopy) {
+      console.log('clicked');
+      return function(){
+        infowindowCopy.open(map,markerCopy)
+      };
+    })(infowindow, marker));
+
+
     markers.push(marker);
   }
 
