@@ -127,7 +127,17 @@ var data = [{
     'description' : 'best crossfit box, Blümelgasse 1, 1060 Wien',
     'type' : 'Misc'
   },
-]
+];
+
+function Model(){
+
+}
+
+function ViewModel(){
+  this.markers = ko.observableArray(markers);
+
+}
+
 
 function populateMarkers(data){
 
@@ -163,7 +173,7 @@ function populateMarkers(data){
       };
     })(infowindow, marker));
 
-    markers.push(marker);
+    myModel.markers.push(marker);
   }
 
 }
@@ -246,4 +256,5 @@ function codeAddress() {
 
 
 google.maps.event.addDomListener(window, 'load', initialize);
-
+var myModel = new ViewModel();
+ko.applyBindings(myModel);

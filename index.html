@@ -22,8 +22,13 @@
 		<div id="map-canvas">Map</div>
 	</div>
 
-	<div>test</div>
+	<div>
+	    <ul data-bind="foreach: markers">
+	        <li data-bind="text: title"></li>
+	    </ul>
+    </div>
 
+	<script src="js/libs/knockout-3.2.0.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?region=EU?v=3.exp&signed_in=true"></script>
 	<script src="js/libs/jquery.min.js"></script>
     <script async src="js/main.js"></script>
