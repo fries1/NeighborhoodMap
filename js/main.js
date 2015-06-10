@@ -1,48 +1,4 @@
 /*
-var geocoder;
-var map;
-function initialize() {
-  console.log('in initialize');
-	var mapCanvas = document.getElementById('map-canvas');
-	geocoder = new google.maps.Geocoder();
-	var latlng = new google.maps.LatLng(44.5403, -78.5463)
-	var mapOptions = {
-	  center: latlng,
-	  zoom: 8,
-	  mapTypeId: google.maps.MapTypeId.ROADMAP
-	}
-	var map = new google.maps.Map(mapCanvas, mapOptions);
-	//map = google.maps.event.addDomListener(window, 'load', initialize);
-}
-
-
-
-function codeAddress() {
-  var address = document.getElementById('address').value;
-  geocoder.geocode( { 'address': address}, function(results, status) {
-    if (status == google.maps.GeocoderStatus.OK) {
-      map.setCenter(results[0].geometry.location);
-      var marker = new google.maps.Marker({
-          map: map,
-          position: results[0].geometry.location
-      });
-    } else {
-      alert('Geocode was not successful for the following reason: ' + status);
-    }
-  });
-}
-
-google.maps.event.addDomListener(window, 'load', initialize);
-*/
-
-/* ToDO
- set markers: restaurants, super markets, misc (crossfit, pharmacy, atm)
-*/
-
-
-
-
-/*
 Restaurants:
 
       Margareta {A: 48.19170769493416, F: 16.35875254869461}
@@ -81,10 +37,205 @@ Supermärkte:
 
 
 */
+var data = [{
+    'title' : 'Altes Fassl',
+    'lat' : 48.19151100699213,
+    'lng' : 16.360471844673157,
+    'description' : 'Nice Beergarden',
+    'type' : 'Restaurant'
+  },
+  {
+    'title' : 'Billa',
+    'lat' : 48.18851768096375,
+    'lng' : 16.35386288166046,
+    'description' : 'just another supermarket, Margaretenstraße 115, 1050 Wien, Austria',
+    'type' : 'Supermarket'
+  },
+  {
+    'title' : 'Veganz',
+    'lat' : 48.19517285504024,
+    'lng' : 16.363009214401245,
+    'description' : 'vegan shop, Margaretenstraße 44, 1040 Wien, Austria',
+    'type' : 'Supermarket'
+  },
+  {
+    'title' : 'Billa',
+    'lat' : 48.19221192784606,
+    'lng' : 16.36017680168152,
+    'description' : 'supermarket, Margaretenstraße 67, 1050 Wien, Austria',
+    'type' : 'Supermarket'
+  },
+  {
+    'title' : 'Billa',
+    'lat' : 48.19266072672536,
+    'lng' : 16.355563402175903,
+    'description' : 'yet another supermarket, Pilgramgasse 22, 1050 Wien, Austria',
+    'type' : 'Supermarket'
+  },
+  {
+    'title' : 'Crossfit ACE',
+    'lat' : 48.1969196503154,
+    'lng' : 16.352081894874573,
+    'description' : 'best crossfit box, Blümelgasse 1, 1060 Wien',
+    'type' : 'Misc'
+  },
+];
+
+var myMap =  {
+  'geocoder' : undefined,
+  'map' : undefined,
+  'markers' : [],
+  'marker_types' : []
+
+};
+
+var ViewModel = function() {
+  console.log(myMap.markers);
+  console.log('test');
+  var self = this;
+  this.populateMarkers = function(data) {
+    for(var i=0; i<data.length; i++){
+      var dataEntry = data[i];
+      var location = {
+          'lat': dataEntry.lat,
+          'lng': dataEntry.lng,
+        };
+      //console.log(location);
+      var marker = new google.maps.Marker({
+        position: location,
+        title: dataEntry.title,
+        icon: function(){
+          if(dataEntry.type == 'Misc'){
+            return 'images/yellow_MarkerM.png';
+          }else if(dataEntry.type == 'Supermarket'){
+            return 'images/red_MarkerS.png';
+          }else if(dataEntry.type == 'Restaurant'){
+            return 'images/darkgreen_MarkerR.png';
+          }
+        }(),
+        map: myMap.map
+      });
+      var infowindow = new google.maps.InfoWindow({
+            content: dataEntry.description
+      });
+
+      // Add an Eventlistener to the marker that can access the marker's infowindow when clicked
+      google.maps.event.addListener(marker, 'click', (function(infowindowCopy, markerCopy) {
+        return function(){
+          infowindowCopy.open(myMap.map,markerCopy)
+        };
+      })(infowindow, marker));
+      console.log('myMap.markers ' + myMap.markers)
+      myMap.markers.push(marker);
+    }
+  };
+
+  this.codeAddress = function() {
+    var address = document.getElementById('address').value;
+    myMap.geocoder.geocode( { 'address': address}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        myMap.map.setCenter(results[0].geometry.location);
+        // This code can be used to add a inital marker at the address location
+        /*
+        var marker = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location
+        });
+        markers.push(marker);
+        */
+      } else {
+        alert('Geocode was not successful for the following reason: ' + status);
+      }
+    });
+  };
+
+  this.initialize = function() {
+    console.log('initializing');
+    myMap.geocoder = new google.maps.Geocoder();
+    self.codeAddress();
+    var mapOptions = {
+      zoom: 14,
+    }
+    myMap.map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+    // This event listener will call addMarker() when the map is clicked.
+    // Was needed to get initial latLng values, might be used in the future to add
+    // additional markers
+    /*
+    google.maps.event.addListener(map, 'click', function(event) {
+      console.log('clicked');
+      console.log('event.latLng ' + event.latLng);
+      console.log(event.latLng);
+      addMarker(event.latLng);
+      positions.push(event.latLng);
+    });
+    */
+    self.populateMarkers(data);
+
+    // add filter html, not used atm
+    /*
+    var filterContainer = document.createElement('div');
+    var label_all = document.createTextNode('all');
+    filterContainer.appendChild(label_all);
+    var checkbox_all = document.createElement("input");
+    checkbox_all.type = 'checkbox';
+    checkbox_all.className = 'checkbox_all';
+    filterContainer.appendChild(checkbox_all);
+    for(var i=0; i<)
+    //var filter
+    map.controls[google.maps.ControlPosition.LEFT_CENTER].push(filterContainer)
+    */
+  };
+
+  // Add a marker to the map and push to the array.
+  this.addMarker = function(location) {
+    //console.log(location);
+    var marker = new google.maps.Marker({
+      position: location,
+      map: map
+    });
+    myMap.markers.push(marker);
+  };
+
+  // Sets the map on all markers in the array.
+  this.setAllMap = function(map) {
+
+    for (var i = 0; i < myMap.markers.length; i++) {
+      myMap.markers[i].setMap(map);
+    }
+  };
+
+  // Removes the markers from the map, but keeps them in the array.
+  this.clearMarkers = function() {
+    // might not work!
+    this.setAllMap(null);
+  };
+
+  // Shows any markers currently in the array.
+  this.showMarkers = function() {
+    this.setAllMap(myMap.map);
+  };
+
+  // Deletes all markers in the array by removing references to them.
+  this.deleteMarkers = function() {
+    this.clearMarkers();
+    myMap.markers = [];
+  };
+
+  google.maps.event.addDomListener(window, 'load', this.initialize);
+};
+ko.applyBindings(new ViewModel());
+
+
+
+///////////////////////
+
+/*
 
 var geocoder;
 var map;
 var markers = [];
+var marker_types = [];
 var data = [{
     'title' : 'Altes Fassl',
     'lat' : 48.19151100699213,
@@ -130,7 +281,6 @@ var data = [{
 ]
 
 function populateMarkers(data){
-
   for(var i=0; i<data.length; i++){
     var dataEntry = data[i];
     var location = {
@@ -165,7 +315,6 @@ function populateMarkers(data){
 
     markers.push(marker);
   }
-
 }
 
 function initialize() {
@@ -188,7 +337,24 @@ function initialize() {
     positions.push(event.latLng);
   });
   */
+
+  /*
   populateMarkers(data);
+
+  // add filter html, not used atm
+  /*
+  var filterContainer = document.createElement('div');
+  var label_all = document.createTextNode('all');
+  filterContainer.appendChild(label_all);
+  var checkbox_all = document.createElement("input");
+  checkbox_all.type = 'checkbox';
+  checkbox_all.className = 'checkbox_all';
+  filterContainer.appendChild(checkbox_all);
+  for(var i=0; i<)
+  //var filter
+  map.controls[google.maps.ControlPosition.LEFT_CENTER].push(filterContainer)
+  */
+  /*
 }
 
 // Add a marker to the map and push to the array.
@@ -238,6 +404,7 @@ function codeAddress() {
       });
       markers.push(marker);
       */
+      /*
     } else {
       alert('Geocode was not successful for the following reason: ' + status);
     }
@@ -245,5 +412,9 @@ function codeAddress() {
 }
 
 
+
+ko.applyBindings(new ViewModel());
+
 google.maps.event.addDomListener(window, 'load', initialize);
 
+*/
