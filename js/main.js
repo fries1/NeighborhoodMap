@@ -44,11 +44,7 @@ google.maps.event.addDomListener(window, 'load', initialize);
 
 /*
 Restaurants:
-      Altes Fassl {A: 48.19151100699213, F: 16.360471844673157}
-      Restaurant Altes Fassl
-      Ziegelofengasse 37
-      1050 Wien
-      Austria
+
       Margareta {A: 48.19170769493416, F: 16.35875254869461}
       Margaretenpl. 2
       1050 Wien
@@ -141,7 +137,7 @@ function populateMarkers(data){
         'lat': dataEntry.lat,
         'lng': dataEntry.lng,
       };
-    console.log(location);
+    //console.log(location);
     var marker = new google.maps.Marker({
       position: location,
       title: dataEntry.title,
@@ -158,16 +154,14 @@ function populateMarkers(data){
     });
     var infowindow = new google.maps.InfoWindow({
           content: dataEntry.description
-        });
+    });
 
     // Add an Eventlistener to the marker that can access the marker's infowindow when clicked
     google.maps.event.addListener(marker, 'click', (function(infowindowCopy, markerCopy) {
-      console.log('clicked');
       return function(){
         infowindowCopy.open(map,markerCopy)
       };
     })(infowindow, marker));
-
 
     markers.push(marker);
   }
@@ -183,6 +177,9 @@ function initialize() {
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
   // This event listener will call addMarker() when the map is clicked.
+  // Was needed to get initial latLng values, might be used in the future to add
+  // additional markers
+  /*
   google.maps.event.addListener(map, 'click', function(event) {
     console.log('clicked');
     console.log('event.latLng ' + event.latLng);
@@ -190,12 +187,13 @@ function initialize() {
     addMarker(event.latLng);
     positions.push(event.latLng);
   });
+  */
   populateMarkers(data);
 }
 
 // Add a marker to the map and push to the array.
 function addMarker(location) {
-  console.log(location);
+  //console.log(location);
   var marker = new google.maps.Marker({
     position: location,
     map: map
@@ -232,11 +230,14 @@ function codeAddress() {
   geocoder.geocode( { 'address': address}, function(results, status) {
     if (status == google.maps.GeocoderStatus.OK) {
       map.setCenter(results[0].geometry.location);
+      // This code can be used to add a inital marker at the address location
+      /*
       var marker = new google.maps.Marker({
           map: map,
           position: results[0].geometry.location
       });
       markers.push(marker);
+      */
     } else {
       alert('Geocode was not successful for the following reason: ' + status);
     }
