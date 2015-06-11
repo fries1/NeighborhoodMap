@@ -85,6 +85,8 @@ Supermärkte:
 var geocoder;
 var map;
 var markers = [];
+var markerTypes = [];
+var markerItems = [];
 var data = [{
     'title' : 'Altes Fassl',
     'lat' : 48.19151100699213,
@@ -133,9 +135,26 @@ function Model(){
 
 }
 
-function ViewModel(){
-  this.markers = ko.observableArray(markers);
+function CheckboxItem(type){
+  var self = this;
+  self.type = ko.observable(type);
+  self.selected = ko.observable(true);
+}
 
+function ViewModel(){
+  var self = this;
+  this.markers = ko.observableArray(markers);
+  this.markerTypeItems = ko.observableArray(markerItems);
+  this.cb = ko.observable(true);
+  self.changeVisibility = function(item){
+    if(item.selected() === true){
+      console.log(item.type() + 'item is selected');
+    }else{
+      console.log(item.type() + 'tiem is not selected');
+    }
+    item.selected(!(item.selected()));
+    return true;
+  }
 }
 
 
@@ -160,7 +179,8 @@ function populateMarkers(data){
           return 'images/darkgreen_MarkerR.png';
         }
       }(),
-      map: map
+      map: map,
+      type: dataEntry.type
     });
     var infowindow = new google.maps.InfoWindow({
           content: dataEntry.description
@@ -172,7 +192,13 @@ function populateMarkers(data){
         infowindowCopy.open(map,markerCopy)
       };
     })(infowindow, marker));
+    console.log(marker);
 
+    if(markerTypes.indexOf(marker.type) == -1){
+      console.log('found new type ' + marker.type);
+      myModel.markerTypeItems.push(new CheckboxItem(marker.type));
+      markerTypes.push(marker.type);
+    }
     myModel.markers.push(marker);
   }
 
