@@ -18,24 +18,38 @@
 		<input onclick="deleteMarkers();" type=button value="Delete Markers">
 	</div>
 
-	<div class="row">
-		<div id="map-canvas">Map</div>
+    	<div data-bind="foreach: markerTypeItems">
+		<input type="checkbox" checked data-bind="value: type(), click: $root.changeVisibility">
+		<span data-bind="text: type()"></span><br>
 	</div>
 
+	<div class="row">
+		<div class="col-2">
+			Here comes the list
+			<ul data-bind="foreach: markers">
+				<li data-bind="text: title">
+					<div data-bind="if: visible">
+						visible <span data-bind="text: visible"></span>
+					</dib>
+				</li>
+			</ul>
+		</div>
+		<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+		<div id="map-canvas" class="col-10">Map</div>
+	</div>
+	<!--
 	<div>
 	    <ul data-bind="foreach: markers">
 	        <li data-bind="text: title"></li>
 	    </ul>
     </div>
-    	<div data-bind="foreach: markerTypeItems">
-    		<input type="checkbox" data-bind="value: type(), click: $root.changeVisibility">
-    		<span data-bind="text: type()"></span><br>
-    	</div>
+-->
+
 
     </div>
 
 	<script src="js/libs/knockout-3.2.0.js"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?region=EU?v=3.exp&signed_in=true"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?region=EU?v=3.exp&signed_in=true&libraries=places"></script>
 	<script src="js/libs/jquery.min.js"></script>
     <script async src="js/main.js"></script>
 </body>

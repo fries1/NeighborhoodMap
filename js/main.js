@@ -143,14 +143,55 @@ function CheckboxItem(type){
 
 function ViewModel(){
   var self = this;
-  this.markers = ko.observableArray(markers);
+  self.markers = ko.observableArray(markers);
   this.markerTypeItems = ko.observableArray(markerItems);
-  this.cb = ko.observable(true);
+  /*this.visibleMarkersList = ko.computed(function(){
+    var visibleListEntries = [];
+    for(var i = 0; i < myModel.markers().length; i++){
+      if(myModel.markers()[i].visible == true){
+        visibleListEntries.push(myModel.markers()[i]);
+      }
+    }
+    return visibleListEntries;
+  });*/
   self.changeVisibility = function(item){
     if(item.selected() === true){
-      console.log(item.type() + 'item is selected');
+      console.log(item.type() + ' item is selected');
+
+      //console.log(myModel.markers()[0]);
+      for(var i = 0; i < myModel.markers().length; i++){
+
+        //console.log(myModel.markers()[i]);
+
+        if(myModel.markers()[i].type == item.type()){
+          console.log('found matching type ');
+          console.log(myModel.markers()[i]);
+          myModel.markers()[i].setVisible(false);
+        }
+      //console.log('markers length ' + myModel.markers().length);
+      /*
+      for(var i = 0; i < myModel.markers().length; i++){
+        var marker = myModel.markers()[i];
+        console.log(marker);
+        /*
+        if(marker.type() == item.type()){
+          console.log('found matching type');
+        }
+        */
+      //}
+      }
     }else{
-      console.log(item.type() + 'tiem is not selected');
+      console.log(item.type() + ' item is not selected');
+      for(var i = 0; i < myModel.markers().length; i++){
+
+        //console.log(myModel.markers()[i]);
+
+        if(myModel.markers()[i].type == item.type()){
+          console.log('found matching type ');
+          console.log(myModel.markers()[i]);
+          myModel.markers()[i].setVisible(true);
+        }
+      }
     }
     item.selected(!(item.selected()));
     return true;
@@ -192,10 +233,8 @@ function populateMarkers(data){
         infowindowCopy.open(map,markerCopy)
       };
     })(infowindow, marker));
-    console.log(marker);
 
     if(markerTypes.indexOf(marker.type) == -1){
-      console.log('found new type ' + marker.type);
       myModel.markerTypeItems.push(new CheckboxItem(marker.type));
       markerTypes.push(marker.type);
     }
@@ -215,7 +254,7 @@ function initialize() {
   // This event listener will call addMarker() when the map is clicked.
   // Was needed to get initial latLng values, might be used in the future to add
   // additional markers
-  /*
+
   google.maps.event.addListener(map, 'click', function(event) {
     console.log('clicked');
     console.log('event.latLng ' + event.latLng);
@@ -223,7 +262,74 @@ function initialize() {
     addMarker(event.latLng);
     positions.push(event.latLng);
   });
+
+  /*
+    (48.215637193754965, 16.287244856357574)
+    (48.1976187093228, 16.33727476000786)
+
   */
+  var defaultBounds = new google.maps.LatLngBounds(
+      new google.maps.LatLng(48.215637193754965, 16.287244856357574),
+      new google.maps.LatLng(48.1976187093228, 16.33727476000786));
+  map.fitBounds(defaultBounds);
+
+  // Create the search box and link it to the UI element.
+  var input = /** @type {HTMLInputElement} */(
+      document.getElementById('pac-input'));
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+  var searchBox = new google.maps.places.SearchBox(
+  /** @type {HTMLInputElement} */(input));
+
+  // [START region_getplaces]
+  // Listen for the event fired when the user selects an item from the
+  // pick list. Retrieve the matching places for that item.
+  google.maps.event.addListener(searchBox, 'places_changed', function() {
+    var places = searchBox.getPlaces();
+
+    if (places.length == 0) {
+      return;
+    }
+    for (var i = 0, marker; marker = markers[i]; i++) {
+      marker.setMap(null);
+    }
+
+    // For each place, get the icon, place name, and location.
+    markers = [];
+    var bounds = new google.maps.LatLngBounds();
+    for (var i = 0, place; place = places[i]; i++) {
+      var image = {
+        url: place.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(25, 25)
+      };
+
+      // Create a marker for each place.
+      var marker = new google.maps.Marker({
+        map: map,
+        icon: image,
+        title: place.name,
+        position: place.geometry.location
+      });
+
+      markers.push(marker);
+
+      bounds.extend(place.geometry.location);
+    }
+
+    map.fitBounds(bounds);
+  });
+  // [END region_getplaces]
+
+  // Bias the SearchBox results towards places that are within the bounds of the
+  // current map's viewport.
+  google.maps.event.addListener(map, 'bounds_changed', function() {
+    var bounds = map.getBounds();
+    searchBox.setBounds(bounds);
+  });
+
   populateMarkers(data);
 }
 
