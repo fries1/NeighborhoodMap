@@ -1,48 +1,4 @@
 /*
-var geocoder;
-var map;
-function initialize() {
-  console.log('in initialize');
-	var mapCanvas = document.getElementById('map-canvas');
-	geocoder = new google.maps.Geocoder();
-	var latlng = new google.maps.LatLng(44.5403, -78.5463)
-	var mapOptions = {
-	  center: latlng,
-	  zoom: 8,
-	  mapTypeId: google.maps.MapTypeId.ROADMAP
-	}
-	var map = new google.maps.Map(mapCanvas, mapOptions);
-	//map = google.maps.event.addDomListener(window, 'load', initialize);
-}
-
-
-
-function codeAddress() {
-  var address = document.getElementById('address').value;
-  geocoder.geocode( { 'address': address}, function(results, status) {
-    if (status == google.maps.GeocoderStatus.OK) {
-      map.setCenter(results[0].geometry.location);
-      var marker = new google.maps.Marker({
-          map: map,
-          position: results[0].geometry.location
-      });
-    } else {
-      alert('Geocode was not successful for the following reason: ' + status);
-    }
-  });
-}
-
-google.maps.event.addDomListener(window, 'load', initialize);
-*/
-
-/* ToDO
- set markers: restaurants, super markets, misc (crossfit, pharmacy, atm)
-*/
-
-
-
-
-/*
 Restaurants:
 
       Margareta {A: 48.19170769493416, F: 16.35875254869461}
@@ -233,7 +189,6 @@ function populateMarkers(data){
       isVisible: ko.observable(true)
     });
 
-
     var infowindow = new google.maps.InfoWindow({
           content: dataEntry.description
     });
@@ -266,7 +221,7 @@ function initialize() {
   // This event listener will call addMarker() when the map is clicked.
   // Was needed to get initial latLng values, might be used in the future to add
   // additional markers
-
+  /*
   google.maps.event.addListener(map, 'click', function(event) {
     console.log('clicked');
     console.log('event.latLng ' + event.latLng);
@@ -274,12 +229,8 @@ function initialize() {
     addMarker(event.latLng);
     positions.push(event.latLng);
   });
+*/
 
-  /*
-    (48.215637193754965, 16.287244856357574)
-    (48.1976187093228, 16.33727476000786)
-
-  */
   var defaultBounds = new google.maps.LatLngBounds(
       new google.maps.LatLng(48.215637193754965, 16.287244856357574),
       new google.maps.LatLng(48.1976187093228, 16.33727476000786));
@@ -412,17 +363,29 @@ function getFourSquareData(){
   var url = "https://api.foursquare.com/v2/venues/search?ll=" + center.A + ',' + center.F +
     '&categoryId=' + '4d4b7105d754a06374d81259' + '&radius=' + '1000' + '&client_id=' + clientID + '&client_secret=' + clientSecret + '&v=201506013';
   var myJSON = $.getJSON(url);
+  myModel.fSMarkers([]);
   $.getJSON(url, function(data){
     var array = [];
     $.each(data.response.venues, function(index, elem){
       // Create a marker for each place.
+      console.log(elem);
       var latlng = new google.maps.LatLng(elem.location.lat, elem.location.lng);
       var marker = new google.maps.Marker({
         map: map,
-
         title: elem.name,
         position: latlng
       });
+      var infowindow = new google.maps.InfoWindow({
+          content: elem.name
+      });
+
+      // Add an Eventlistener to the marker that can access the marker's infowindow when clicked
+      google.maps.event.addListener(marker, 'click', (function(infowindowCopy, markerCopy) {
+        return function(){
+          infowindowCopy.open(map,markerCopy)
+        };
+      })(infowindow, marker));
+
       //console.log('adding marker ' + marker.title);
       myModel.fSMarkers.push(marker);
       //fourSquareMarkers.push(marker);
@@ -430,6 +393,18 @@ function getFourSquareData(){
 
   });
   console.log(fourSquareMarkers);
+}
+
+function fSMarkerClicked(){
+  console.log(this);
+  for(var i=0; i<myModel.fSMarkers().length; i++){
+    console.log(i);
+    console.log(myModel.fSMarkers()[i].title + ' ' + this.title);
+    if(myModel.fSMarkers()[i].title == this.title){
+      console.log('found match');
+      google.maps.event.trigger(myModel.fSMarkers()[i], 'click');
+    }
+  }
 }
 
 
