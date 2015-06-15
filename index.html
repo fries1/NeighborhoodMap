@@ -8,41 +8,44 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-	<div class="row">
-		<input id="address" type="textbox" value="Margareten, Vienna, Austria">
-		<input type="button" value="Search" onclick="codeAddress()">
-	</div>
-	<div class="row">
-		<input onclick="clearMarkers();" type=button value="Hide Markers">
-		<input onclick="showMarkers();" type=button value="Show All Markers">
-		<input onclick="deleteMarkers();" type=button value="Delete Markers">
-	</div>
-
-    <div data-bind="foreach: markerTypeItems">
-		<input type="checkbox" checked data-bind="value: type(), click: $root.changeVisibility">
-		<span data-bind="text: type()"></span><br>
-	</div>
-
-	<div class="row">
-		<div class="col-2">
-			The markers I added:
-			<ul data-bind="foreach: $root.markers">
-				<div data-bind="if: isVisible">
-					<li >
-						<div data-bind="text: title"></div>
-					</li>
-				</div>
-			</ul>
-
-			<input onclick="getFourSquareData();" type=button value="Fetch fourSquare data">
-
-			<ul data-bind="foreach: fSMarkers">
-				<li data-bind="text: title, click: fSMarkerClicked"></li>
-			</ul>
+	<div class="content">
+		<div class="row">
+			<input id="address" type="textbox" value="Margareten, Vienna, Austria">
+			<input type="button" value="Search" onclick="codeAddress()">
 		</div>
-		<input id="pac-input" class="controls" type="text" placeholder="Search Box">
-		<div id="map-canvas" class="col-10">Map</div>
+		<div class="row">
+			<input onclick="clearMarkers();" type=button value="Hide Markers">
+			<input onclick="showMarkers();" type=button value="Show All Markers">
+			<input onclick="deleteMarkers();" type=button value="Delete Markers">
+		</div>
+
+	    <div data-bind="foreach: markerTypeItems">
+			<input type="checkbox" checked data-bind="value: type(), click: $root.changeVisibility">
+			<span data-bind="text: type()"></span><br>
+		</div>
+
+		<div class="row">
+			<div class="col-2 content">
+				The markers I added:
+				<ul class='flex-box' data-bind="foreach: $root.markers">
+					<div data-bind="if: isVisible">
+						<li >
+							<div data-bind="text: title"></div>
+						</li>
+					</div>
+				</ul>
+
+				<input onclick="getFourSquareData();" type=button value="Fetch fourSquare data">
+
+				<ul data-bind="foreach: fSMarkers">
+					<li data-bind="text: title, click: fSMarkerClicked"></li>
+				</ul>
+				<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+			</div>
+			<div id="map-canvas" class="col-10 content">Map</div>
+		</div>
 	</div>
+
 
 	<script src="js/libs/knockout-3.2.0.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?region=EU?v=3.exp&signed_in=true&libraries=places"></script>
