@@ -18,21 +18,30 @@
 		<input onclick="deleteMarkers();" type=button value="Delete Markers">
 	</div>
 
-    	<div data-bind="foreach: markerTypeItems">
+    <div data-bind="foreach: markerTypeItems">
 		<input type="checkbox" checked data-bind="value: type(), click: $root.changeVisibility">
 		<span data-bind="text: type()"></span><br>
 	</div>
 
 	<div class="row">
 		<div class="col-2">
-			Here comes the list
-			<ul data-bind="foreach: markers">
-				<li data-bind="text: title">
-					<div data-bind="if: visible">
-						visible <span data-bind="text: visible"></span>
-					</dib>
-				</li>
+			The markers I added:
+			<ul data-bind="foreach: $root.markers">
+				<div data-bind="if: isVisible">
+					<li >
+						<div data-bind="text: title">
+						</div>
+					</li>
+				</div>
 			</ul>
+
+			<input onclick="getFourSquareData();" type=button value="Fetch fourSquare data">
+
+			<ul data-bind="foreach: fSMarkers">
+				<li data-bind="text: title"></li>
+			</ul>
+
+
 		</div>
 		<input id="pac-input" class="controls" type="text" placeholder="Search Box">
 		<div id="map-canvas" class="col-10">Map</div>

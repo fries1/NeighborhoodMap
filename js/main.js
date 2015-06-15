@@ -85,6 +85,7 @@ Supermärkte:
 var geocoder;
 var map;
 var markers = [];
+var fourSquareMarkers = [];
 var markerTypes = [];
 var markerItems = [];
 var data = [{
@@ -144,6 +145,7 @@ function CheckboxItem(type){
 function ViewModel(){
   var self = this;
   self.markers = ko.observableArray(markers);
+  self.fSMarkers = ko.observableArray(fourSquareMarkers);
   this.markerTypeItems = ko.observableArray(markerItems);
   /*this.visibleMarkersList = ko.computed(function(){
     var visibleListEntries = [];
@@ -155,8 +157,8 @@ function ViewModel(){
     return visibleListEntries;
   });*/
   self.changeVisibility = function(item){
+    console.log(item.type + "'s visibility is " + item.visible)
     if(item.selected() === true){
-      console.log(item.type() + ' item is selected');
 
       //console.log(myModel.markers()[0]);
       for(var i = 0; i < myModel.markers().length; i++){
@@ -166,7 +168,10 @@ function ViewModel(){
         if(myModel.markers()[i].type == item.type()){
           console.log('found matching type ');
           console.log(myModel.markers()[i]);
+          console.log('visibility is ' + myModel.markers()[i].visible);
           myModel.markers()[i].setVisible(false);
+          myModel.markers()[i].isVisible(false);
+          console.log('visibility is ' + myModel.markers()[i].visible);
         }
       //console.log('markers length ' + myModel.markers().length);
       /*
@@ -189,7 +194,10 @@ function ViewModel(){
         if(myModel.markers()[i].type == item.type()){
           console.log('found matching type ');
           console.log(myModel.markers()[i]);
+          console.log('visibility is ' + myModel.markers()[i].visible);
           myModel.markers()[i].setVisible(true);
+          myModel.markers()[i].isVisible(true);
+          console.log('visibility is ' + myModel.markers()[i].visible);
         }
       }
     }
@@ -221,8 +229,11 @@ function populateMarkers(data){
         }
       }(),
       map: map,
-      type: dataEntry.type
+      type: dataEntry.type,
+      isVisible: ko.observable(true)
     });
+
+
     var infowindow = new google.maps.InfoWindow({
           content: dataEntry.description
     });
@@ -248,6 +259,7 @@ function initialize() {
   codeAddress();
   var mapOptions = {
     zoom: 14,
+    center:new google.maps.LatLng(48.191382265384924, 16.358393132686615)
   }
   map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
@@ -331,6 +343,11 @@ function initialize() {
   });
 
   populateMarkers(data);
+  // 48.190237881327526, 16.358964443206787
+  /*
+  console.log(map.getCenter());
+  getfourSquareData(48.190237881327526, 16.358964443206787);
+  */
 }
 
 // Add a marker to the map and push to the array.
@@ -385,6 +402,37 @@ function codeAddress() {
     }
   });
 }
+
+function getFourSquareData(){
+  // category ID
+  // Food 4d4b7105d754a06374d81259
+  var center = map.getCenter();
+  var clientID = '2OA0JAMGRATF3CCFOVBTHNHZOXFMG2MRATCCGM03CSLY0KMO';
+  var clientSecret = 'LX0R5AUB4WDRFODRP1CKXNYPYRF42U2AHRZMCZGVL5TPTQHH';
+  var url = "https://api.foursquare.com/v2/venues/search?ll=" + center.A + ',' + center.F +
+    '&categoryId=' + '4d4b7105d754a06374d81259' + '&radius=' + '1000' + '&client_id=' + clientID + '&client_secret=' + clientSecret + '&v=201506013';
+  var myJSON = $.getJSON(url);
+  $.getJSON(url, function(data){
+    var array = [];
+    $.each(data.response.venues, function(index, elem){
+      // Create a marker for each place.
+      var latlng = new google.maps.LatLng(elem.location.lat, elem.location.lng);
+      var marker = new google.maps.Marker({
+        map: map,
+
+        title: elem.name,
+        position: latlng
+      });
+      //console.log('adding marker ' + marker.title);
+      myModel.fSMarkers.push(marker);
+      //fourSquareMarkers.push(marker);
+    });
+
+  });
+  console.log(fourSquareMarkers);
+}
+
+
 
 
 google.maps.event.addDomListener(window, 'load', initialize);
