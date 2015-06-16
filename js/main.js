@@ -14,7 +14,7 @@ var Model = {
       'type' : 'Restaurant'
     },
     {
-      'title' : 'Billa',
+      'title' : 'Billa 1',
       'lat' : 48.18851768096375,
       'lng' : 16.35386288166046,
       'description' : 'just another supermarket, Margaretenstraße 115, 1050 Wien, Austria',
@@ -28,14 +28,14 @@ var Model = {
       'type' : 'Supermarket'
     },
     {
-      'title' : 'Billa',
+      'title' : 'Billa 2',
       'lat' : 48.19221192784606,
       'lng' : 16.36017680168152,
       'description' : 'supermarket, Margaretenstraße 67, 1050 Wien, Austria',
       'type' : 'Supermarket'
     },
     {
-      'title' : 'Billa',
+      'title' : 'Billa 3',
       'lat' : 48.19266072672536,
       'lng' : 16.355563402175903,
       'description' : 'yet another supermarket, Pilgramgasse 22, 1050 Wien, Austria',
@@ -257,7 +257,7 @@ function CheckboxItem(type){
   self.selected = ko.observable(true);
 }
 
-/** Querries the FS api, builds and adds a markers for every entry */
+/** Queries the FS api, builds and adds a markers for every entry */
 function getFourSquareData(){
   // category ID for Food 4d4b7105d754a06374d81259
   var center = Model.map.getCenter();
@@ -291,7 +291,10 @@ function getFourSquareData(){
 
       myViewModel.fSMarkers.push(marker);
     });
-  });
+  }).error(function(e){
+        console.log('there was an error with the interner');
+        $('.fSList').text('FourSquare Items Could Not Be Loaded');
+    });
 }
 
 /** Trigger the marker's event listener when its list entry is clicked */
@@ -299,6 +302,15 @@ function fSMarkerClicked(){
   for(var i=0; i<myViewModel.fSMarkers().length; i++){
     if(myViewModel.fSMarkers()[i].title == this.title){
       google.maps.event.trigger(myViewModel.fSMarkers()[i], 'click');
+    }
+  }
+}
+
+/** Trigger the marker's event listener when its list entry is clicked */
+function customMarkerClicked(){
+  for(var i=0; i<myViewModel.markers().length; i++){
+    if(myViewModel.markers()[i].title == this.title){
+      google.maps.event.trigger(myViewModel.markers()[i], 'click');
     }
   }
 }
