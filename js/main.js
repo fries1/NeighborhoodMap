@@ -307,6 +307,7 @@ function getFourSquareData(){
         console.log('there was an error with the interner');
         $('.fSList').text('FourSquare Items Could Not Be Loaded');
     });
+
 }
 
 /** Trigger the marker's event listener when its list entry is clicked */
