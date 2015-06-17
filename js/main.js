@@ -182,12 +182,6 @@ function populateMarkers(data){
       type: dataEntry.type,
       isVisible: ko.observable(true)
     });
-    /*
-    var infowindow = new google.maps.InfoWindow({
-          content: dataEntry.description
-    });
-
-    */
 
     // Add an Eventlistener to the marker that can access the marker's infowindow when clicked
     google.maps.event.addListener(marker, 'click', (function(description, markerCopy) {
@@ -288,16 +282,20 @@ function getFourSquareData(){
         title: elem.name,
         position: latlng
       });
-      var infowindow = new google.maps.InfoWindow({
-          content: elem.name
-      });
 
       // Add an Eventlistener to the marker that can access the marker's infowindow when clicked
-      google.maps.event.addListener(marker, 'click', (function(infowindowCopy, markerCopy) {
+      google.maps.event.addListener(marker, 'click', (function(description, markerCopy) {
         return function(){
-          infowindowCopy.open(Model.map,markerCopy);
+          if(Model.infowindow){
+            Model.infowindow.close();
+          }
+          Model.infowindow = new google.maps.InfoWindow({
+            content: description
+          });
+          Model.infowindow.open(Model.map,markerCopy);
+          Model.map.setCenter(markerCopy.getPosition());
         };
-      })(infowindow, marker));
+      })(elem.name, marker));
 
       myViewModel.fSMarkers.push(marker);
     });
