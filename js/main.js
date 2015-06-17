@@ -5,6 +5,7 @@ var Model = {
   markers: [],
   markerTypes: [],
   markerItems: [],
+  infowindow: undefined,
   /** data needed to create the custom markers */
   data: [{
       'title' : 'Altes Fassl',
@@ -181,17 +182,26 @@ function populateMarkers(data){
       type: dataEntry.type,
       isVisible: ko.observable(true)
     });
-
+    /*
     var infowindow = new google.maps.InfoWindow({
           content: dataEntry.description
     });
 
+    */
+
     // Add an Eventlistener to the marker that can access the marker's infowindow when clicked
-    google.maps.event.addListener(marker, 'click', (function(infowindowCopy, markerCopy) {
+    google.maps.event.addListener(marker, 'click', (function(description, markerCopy) {
       return function(){
-        infowindowCopy.open(Model.map,markerCopy);
+        if(Model.infowindow){
+          Model.infowindow.close();
+        }
+        Model.infowindow = new google.maps.InfoWindow({
+          content: description
+        });
+        Model.infowindow.open(Model.map,markerCopy);
+        Model.map.setCenter(markerCopy.getPosition());
       };
-    })(infowindow, marker));
+    })(dataEntry.description, marker));
 
     // if a marker with a not yet discovered type was created, the new type is added to the marker
     // types array
