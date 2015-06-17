@@ -62,7 +62,10 @@ function ViewModel(){
   /** Controls the visibility of the custom markers and their list entries depending on
       checkbox status*/
   self.changeVisibility = function(item){
-    Model.infowindow.close();
+    if(Model.infowindow){
+      Model.infowindow.close();
+    }
+
     if(item.selected() === true){
       for(var i = 0; i < myViewModel.markers().length; i++){
         if(myViewModel.markers()[i].type == item.type()){
