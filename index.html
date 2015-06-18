@@ -4,52 +4,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <title>Neighrborhood Map</title>
+    <!-- Bootstrap Core CSS -->
+    <!--<link href="css/bootstrap.min.css" rel="stylesheet">-->
 
+    <!-- Custom CSS -->
+    <link href="css/simple-sidebar.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-	<div class="content">
-		<div class="row">
-			<input id="address" type="textbox" value="Margareten, Vienna, Austria">
-			<input type="button" value="Search" onclick="codeAddress()">
-		</div>
-		<div class="row">
-			<input onclick="clearMarkers();" type=button value="Hide Markers">
-			<input onclick="showMarkers();" type=button value="Show All Markers">
-			<input onclick="deleteMarkers();" type=button value="Delete Markers">
-		</div>
+	<div id="wrapper">
 
-	    <div data-bind="foreach: markerTypeItems">
-			<input type="checkbox" checked data-bind="value: type(), click: $root.changeVisibility">
-			<span data-bind="text: type()"></span><br>
-		</div>
+<!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        Menu
+                    </a>
+                </li>
+                <li>
+                	<h4>Custom Marker Types</h4>
+                	<div data-bind="foreach: markerTypeItems">
+                		<div>
+                			<input type="checkbox" checked data-bind="value: type(), click: $root.changeVisibility">
+							<span data-bind="text: type()"></span><br>
+                		</div>
 
-		<div class="row">
-			<div class="col-2 content">
-				The markers I added:
-				<ul data-bind="foreach: $root.markers">
-					<div data-bind="if: isVisible">
-						<li >
-							<div data-bind="text: title, click: customMarkerClicked"></div>
-						</li>
 					</div>
-				</ul>
+                </li>
+                <li>
+                	<h4>Custom Markers</h4>
+					<ul data-bind="foreach: $root.markers">
+						<div data-bind="if: isVisible">
+							<li >
+								<div data-bind="text: title, click: customMarkerClicked"></div>
+							</li>
+						</div>
+					</ul>
+                </li>
+                <li>
+                	<input onclick="getFourSquareData();" type=button value="Fetch fourSquare data">
 
-				<input onclick="getFourSquareData();" type=button value="Fetch fourSquare data">
-
-				<ul class="fSList" data-bind="foreach: fSMarkers">
-					<li data-bind="text: title, click: fSMarkerClicked"></li>
-				</ul>
-				<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+					<ul class="fSList" data-bind="foreach: fSMarkers">
+						<li data-bind="text: title, click: fSMarkerClicked"></li>
+					</ul>
+                </li>
+                <li>
+                    <a href="#">Shortcuts</a>
+                </li>
+            </ul>
+        </div>
+<!-- /#sidebar-wrapper -->
+		<div class="content">
+			<div class="row">
+				<input id="address" type="textbox" value="Margareten, Vienna, Austria">
+				<input type="button" value="Search" onclick="codeAddress()">
 			</div>
-			<div id="map-canvas" class="col-10 content">Map</div>
+			<div class="row">
+				<input onclick="clearMarkers();" type=button value="Hide Markers">
+				<input onclick="showMarkers();" type=button value="Show All Markers">
+				<input onclick="deleteMarkers();" type=button value="Delete Markers">
+			</div>
+			<div class="row">
+				<input id="pac-input" class="controls" type="text" placeholder="Search Box">
+				<div id="map-canvas" class="col-12 content">Map</div>
+			</div>
+			<a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>
 		</div>
 	</div>
-
 
 	<script src="js/libs/knockout-3.2.0.js"></script>
 	<script src="https://maps.googleapis.com/maps/api/js?region=EU?v=3.exp&signed_in=true&libraries=places"></script>
 	<script src="js/libs/jquery.min.js"></script>
     <script async src="js/main.js"></script>
+        <!-- Menu Toggle Script -->
+    <script>
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+    </script>
 </body>
 </html>
