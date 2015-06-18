@@ -5,6 +5,7 @@ var Model = {
   markers: [],
   markerTypes: [],
   markerItems: [],
+  fSMarkers: [],
   infowindow: undefined,
   /** data needed to create the custom markers */
   data: [{
@@ -56,8 +57,8 @@ var Model = {
 function ViewModel(){
   var self = this;
   self.markers = ko.observableArray(Model.markers);
-  self.fSMarkers = ko.observableArray([]);
-  this.markerTypeItems = ko.observableArray(Model.markerItems);
+  self.fSMarkers = ko.observableArray(Model.fSMarkers);
+  self.markerTypeItems = ko.observableArray(Model.markerItems);
 
   /** Controls the visibility of the custom markers and their list entries depending on
       checkbox status*/
@@ -235,7 +236,9 @@ function showMarkers() {
 function deleteMarkers() {
   clearMarkers();
   Model.markers = [];
+  console.log('in delete ' + myViewModel.fSMarkers());
   myViewModel.fSMarkers = ko.observableArray([]);
+  console.log('after delete ' + myViewModel.fSMarkers());
 }
 
 /** Reads the address box and centers the map on a new address if a search is initiated*/
@@ -267,10 +270,11 @@ function CheckboxItem(type){
 
 /** Queries the FS api, builds and adds a markers for every entry */
 function getFourSquareData(){
+  setAllMap(null);
   // category ID for Food 4d4b7105d754a06374d81259
+
   clearMarkers();
   myViewModel.fSMarkers([]);
-
   var center = Model.map.getCenter();
   var clientID = '2OA0JAMGRATF3CCFOVBTHNHZOXFMG2MRATCCGM03CSLY0KMO';
   var clientSecret = 'LX0R5AUB4WDRFODRP1CKXNYPYRF42U2AHRZMCZGVL5TPTQHH';
@@ -279,7 +283,6 @@ function getFourSquareData(){
     clientID + '&client_secret=' + clientSecret + '&v=201506013';
   var myJSON = $.getJSON(url);
   $.getJSON(url, function(data){
-    var array = [];
     $.each(data.response.venues, function(index, elem){
       // Create a marker for each place.
       var latlng = new google.maps.LatLng(elem.location.lat, elem.location.lng);
@@ -304,6 +307,8 @@ function getFourSquareData(){
       })(elem.name, marker));
 
       myViewModel.fSMarkers.push(marker);
+
+      //Model.fSMarkers.push(marker);
     });
   }).error(function(e){
         console.log('there was an error with the interner');
