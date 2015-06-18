@@ -1,3 +1,4 @@
+"use strict";
 /** Model containing all the relevant data objects */
 var Model = {
   geocoder: undefined,
@@ -66,7 +67,6 @@ function ViewModel(){
     if(Model.infowindow){
       Model.infowindow.close();
     }
-
     if(item.selected() === true){
       for(var i = 0; i < myViewModel.markers().length; i++){
         if(myViewModel.markers()[i].type == item.type()){
@@ -75,7 +75,8 @@ function ViewModel(){
         }
       }
     }else{
-      for(var i = 0; i < myViewModel.markers().length; i++){
+      var len = myViewModel.markers().length;
+      for(var i = 0; i < len; i++){
         if(myViewModel.markers()[i].type == item.type()){
           myViewModel.markers()[i].setVisible(true);
           myViewModel.markers()[i].isVisible(true);
