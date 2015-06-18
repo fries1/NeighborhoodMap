@@ -268,6 +268,9 @@ function CheckboxItem(type){
 /** Queries the FS api, builds and adds a markers for every entry */
 function getFourSquareData(){
   // category ID for Food 4d4b7105d754a06374d81259
+  clearMarkers();
+  myViewModel.fSMarkers([]);
+
   var center = Model.map.getCenter();
   var clientID = '2OA0JAMGRATF3CCFOVBTHNHZOXFMG2MRATCCGM03CSLY0KMO';
   var clientSecret = 'LX0R5AUB4WDRFODRP1CKXNYPYRF42U2AHRZMCZGVL5TPTQHH';
@@ -275,7 +278,6 @@ function getFourSquareData(){
     '&categoryId=' + '4d4b7105d754a06374d81259' + '&radius=' + '1000' + '&client_id=' +
     clientID + '&client_secret=' + clientSecret + '&v=201506013';
   var myJSON = $.getJSON(url);
-  myViewModel.fSMarkers([]);
   $.getJSON(url, function(data){
     var array = [];
     $.each(data.response.venues, function(index, elem){
@@ -307,6 +309,7 @@ function getFourSquareData(){
         console.log('there was an error with the interner');
         $('.fSList').text('FourSquare Items Could Not Be Loaded');
     });
+  setAllMap(Model.map);
 }
 
 /** Trigger the marker's event listener when its list entry is clicked */
